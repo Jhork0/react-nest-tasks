@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from 'src/schemas/task.schema';
+import { CreateTaskDto } from 'src/dtos/create-task.dto';
+import { UpdateTaskDto } from 'src/dtos/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -10,7 +12,17 @@ export class TasksService {
   findAll() {
     return this.taskModel.find();
   }
-  async create(createTask: any) {
+  async create(createTask: CreateTaskDto) {
+    const existingTask = await this.taskModel.findOne({
+      title: createTask.title,
+    });
+
+    if (existingTask) {
+      throw new ConflictException(
+        `Ya existe una tarea con el título: "${createTask.title}"`,
+      );
+    }
+
     return this.taskModel.create(createTask);
   }
 
@@ -22,7 +34,7 @@ export class TasksService {
     return this.taskModel.findByIdAndDelete(id);
   }
 
-  async updateUser(id: string, taskUpdated: any) {
+  async updateUser(id: string, taskUpdated: UpdateTaskDto) {
     return this.taskModel.findByIdAndUpdate(id, taskUpdated);
   }
 }
