@@ -1,6 +1,5 @@
 import { useState, type ChangeEvent } from "react"
-
-
+import {createTaskRequest} from '../apis/tasks'
 
 const TaskFrom = () => {
     const [task,setTask] =useState({
@@ -14,9 +13,12 @@ const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) =
     
 }
 
-const handleSummit = (e: ChangeEvent<HTMLFormElement>) =>{
+ const handleSummit = async (e: ChangeEvent<HTMLFormElement>) =>{
     e.preventDefault()
     console.log(task)
+    const respuesta = await createTaskRequest(task)
+    const data = await respuesta.json()
+    console.log(data)
 }
   return (
     <div>
@@ -27,7 +29,7 @@ const handleSummit = (e: ChangeEvent<HTMLFormElement>) =>{
         placeholder="Escribe un titulo"
         onChange={handleChange}
         />
-        <textarea name="descripcion" 
+        <textarea name="description" 
         className="border-2 border-gray-700 p-2 rounded-lg bg-zinc-800 block w-full my-2" 
         placeholder="Escribe una descripcion" 
         rows={3} 
