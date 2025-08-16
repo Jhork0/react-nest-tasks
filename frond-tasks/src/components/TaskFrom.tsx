@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from "react"
-import {createTaskRequest} from '../apis/tasks'
+import { useTask } from "../contexts/useTask"
 
 const TaskFrom = () => {
     const [task,setTask] =useState({
@@ -7,22 +7,22 @@ const TaskFrom = () => {
     description: "",
     done: false
 })
+const  { createTask} = useTask()
+
 
 const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) =>{
     setTask({...task, [e.target.name]: e.target.value})
     
 }
 
- const handleSummit = async (e: ChangeEvent<HTMLFormElement>) =>{
+ const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) =>{
     e.preventDefault()
-    console.log(task)
-    const respuesta = await createTaskRequest(task)
-    const data = await respuesta.json()
-    console.log(data)
+    createTask(task)
+    
 }
   return (
     <div>
-      <form onSubmit={handleSummit}>
+      <form onSubmit={handleSubmit}>
         <input type="text" 
         name="title" 
         className="border-2 border-gray-700 p-2 rounded-lg bg-zinc-800 block w-full my-2" 
